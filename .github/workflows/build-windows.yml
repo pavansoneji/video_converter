@@ -1,4 +1,4 @@
-name: Build Windows exe
+name: Build executables
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,4 +32,30 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: VideoConverter-windows
+          path: dist/
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Build app
+        run: pyinstaller --onefile --windowed --name VideoConverter main.py
+
+      - name: Bundle FFmpeg
+        run: |
+          brew install ffmpeg
+          cp "$(command -v ffmpeg)" dist/
+          cp "$(command -v ffprobe)" dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VideoConverter-macos
           path: dist/

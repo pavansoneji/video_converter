@@ -106,6 +106,23 @@ most use cases.
 `ffmpeg/bin` subfolder) before falling back to PATH — so a packaged build
 plus a copy of the FFmpeg binaries needs zero installs on the target machine.
 
+### Option A: download a prebuilt copy from GitHub Actions (easiest)
+
+Every push to `main` builds both Windows and macOS versions automatically:
+
+1. Go to the repo's **Actions** tab → open the latest **Build executables** run.
+2. Wait for the green check.
+3. Scroll to **Artifacts** and download:
+   - `VideoConverter-windows` for Windows
+   - `VideoConverter-macos` for macOS
+4. Unzip it — FFmpeg is already bundled inside, next to the app.
+5. **Windows**: double-click `VideoConverter.exe` and run.
+6. **macOS**: Gatekeeper will block an unsigned app on first run — right-click
+   `VideoConverter` → **Open** → **Open** again to confirm, instead of
+   double-clicking. After that it opens normally.
+
+### Option B: build it yourself
+
 **Windows** — run on an actual Windows machine (PyInstaller doesn't
 cross-compile):
 
@@ -119,14 +136,21 @@ This installs PyInstaller and builds `dist\VideoConverter.exe`. Then drop
 that's the whole distributable, no Python or PATH setup required on the
 receiving machine.
 
-**macOS/Linux**, same idea:
+**macOS** — run on an actual Mac (same cross-compile limitation):
 
 ```bash
 pip install -r requirements-dev.txt
 pyinstaller --onefile --windowed --name VideoConverter main.py
+brew install ffmpeg
+cp "$(command -v ffmpeg)" dist/
+cp "$(command -v ffprobe)" dist/
 ```
-then place the platform's `ffmpeg`/`ffprobe` binaries next to the built
-executable.
+
+Note: Homebrew's `ffmpeg`/`ffprobe` are dynamically linked against Homebrew's
+libraries — this only works standalone on another Mac that also has Homebrew
+installed. For a fully portable build, download a self-contained static
+build (e.g. from https://evermeet.cx/ffmpeg/) instead of the `brew install`
+copy.
 
 ## Extending it further
 
