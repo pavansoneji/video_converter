@@ -202,9 +202,9 @@ def build_video_command(
     if audio_label == AUDIO_PCM:
         cmd += ["-c:a", "pcm_s16le", "-ar", "48000"]
     elif audio_label == AUDIO_AAC:
-        cmd += ["-c:a", "aac", "-b:a", "192k"]
+        cmd += ["-c:a", "aac", "-b:a", "192k", "-ar", "48000"]
     elif audio_label == AUDIO_OPUS:
-        cmd += ["-c:a", "libopus", "-b:a", "192k"]
+        cmd += ["-c:a", "libopus", "-b:a", "192k", "-ar", "48000"]
     else:  # AUDIO_NONE
         cmd += ["-an"]
 
